@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
+﻿
 
 namespace ShadowOfWorld_Console_CSharp {
   class Start {
@@ -11,8 +6,15 @@ namespace ShadowOfWorld_Console_CSharp {
       //Graphic.Start.Core();
 
       UserGroup.SignInAndSignUp v = new UserGroup.SignInAndSignUp();
-      v.Register("1010");
       
+      v.Register("8771");
+
+      UserGroup.Manager fs = new UserGroup.Manager();
+      UserGroup.Manager.Find();
+
+
+
+      System.Console.ReadKey();
     }
   }
 }
@@ -46,11 +48,45 @@ namespace ConsoleGraphic {
 }
 */
 namespace UserGroup {
+  
+  public class Manager {
+
+    private readonly static string UserNameListPath = @"C:/Users/Public/Documents/RMDUST/ShadowOfWorld/Save/UserNameList.txt";
+    public static string[] UserNameList;
+
+    public Manager() {
+        Reset();
+    }
+
+    // 初始化
+    private void Reset() {
+      
+      System.IO.File.Create(UserNameListPath);
+
+    }
+
+
+    // 索引本地用户存档
+    public static void Find() {
+      int Line = 0;
+        
+      UserNameList = new string[] { null};
+      foreach (string UserName in System.IO.File.ReadAllLines(UserNameListPath)) {
+        UserNameList[Line] = UserName;
+        Line++;
+      }
+                
+    }
+    public static void Find(string ID) {
+        
+    }  
+
+
+  }
 
   class SignInAndSignUp {
 
-    private string[] userNameList;
-    //List<userName> userNameList = new List<userName>();
+    public string[] UserNameList = new string[6];
 
     private string userName;
     public string UserName {
@@ -79,38 +115,40 @@ namespace UserGroup {
      */
 
     
-    public void Register(string value) {
-      string Path = CSIDL_PERSONAL + "\RMDUST\ShadowOfWorld\UserNameList.txt";
+    public void Register(string ID) {
+      UserName = ID;
 
-      if (false == System.IO.Directory.Exists(Path)) {
-        Directory.CreateDirectory(Path);
-      }
-      userNameList[] = System.IO.File.ReadLines(Path);
+      // 创建本地文件夹
+      System.IO.Directory.CreateDirectory(@"C:/RMDUST/ShadowOfWorld/UserNameList/");
 
-
+      
+      
 
     }
+
     public void SignUp() {
-
+      // 打开文件并存档新的用户名
+      using (System.IO.StreamWriter Create = System.IO.File.AppendText(@"C:/RMDUST/ShadowOfWorld/UserNameList/02.txt"))
+      {
+        Create.Write(UserName);
+        Create.Close();
+      }
+      // 创建新用户的各项信息
     }
+
     public void SignIn() {
-
+      System.Console.WriteLine("!");
     }
+
     private string SendUserID() {
 
       return userName;
     }
-
-
-    
-
-
+    // First Core
     public static void Login() {
 
     }
 
   }
-
-  
 
 }

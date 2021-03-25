@@ -5,6 +5,7 @@ namespace ShadowOfWorld_Console_CSharp {
     public static void Main() {
 
       System.Console.BackgroundColor = 0;
+      
       System.Console.SetWindowSize(120 , 40);
       System.Console.SetBufferSize(120 , 40);
 
@@ -45,18 +46,15 @@ namespace ConsoleGraphic {
     }
 
     public void GetMenuCenter() {
-      System.Console.WriteLine("1. Game Start\n2. Game Passage\n3. Help\n4. Back User\n0. Game Exit\n");
       string[] List = new string[] { "Game Start" , "Game Passage" , "Help" , "Back User" , "Game Exit" };
 
-      // OK
-      int Con = 0;
-      while (true) {
-        
-        System.Console.WriteLine(List[Con = GetMenuReadKey(Con , 5)]);
+      foreach (string Message in List) {
+        System.Console.WriteLine(Message);
+      }
 
-        if(Con == 5) {
-          break;
-        }
+      int Con = 0;
+      while (Con != 5) {
+        System.Console.WriteLine(List[Con = GetMenuReadKey(Con , 5)]);
       }
     }
 
@@ -81,8 +79,8 @@ namespace ConsoleGraphic {
       return ControlValue;
     }
     public int GetMenuReadKey(int ControlValue , int Max) {
-      string aa = System.Console.ReadKey().KeyChar.ToString();
-      switch (aa) {
+      
+      switch (System.Console.ReadKey().KeyChar.ToString()) {
         case "w":
           if (ControlValue != 0) {
             ControlValue --;

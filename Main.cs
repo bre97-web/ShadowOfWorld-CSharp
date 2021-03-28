@@ -11,13 +11,7 @@ namespace ShadowOfWorld_Console_CSharp {
 
       ConsoleGraphic.Wellcome.Logo();
 
-      ConsoleGraphic.GetMenu Core = new ConsoleGraphic.GetMenu();
-
-      // 屏蔽回车
-      //System.ConsoleKeyInfo a = System.Console.ReadKey(true);
-      //System.Console.ReadKey(true);
-
-      
+      ConsoleGraphic.Menu Core = new ConsoleGraphic.Menu();
       Core.GetMenuCenter();
 
 
@@ -40,106 +34,119 @@ namespace ConsoleGraphic {
   }
 
 
-  public class GetMenu {
-    public GetMenu() {
-
+  public class Menu {
+    public Menu() {
+      MenuList = new string[] { "Game Start" , "Game Passage" , "Help" , "Back User" , "Game Exit" , " " };
+      ConMax = 4;
+      Con = 0;
+      Active = true;
     }
 
-    public void GetMenuCenter() {
-      string[] List = new string[] { "Game Start" , "Game Passage" , "Help" , "Back User" , "Game Exit" };
+    // 目录表
+    private string[] MenuList;
+    private int ConMax;
 
-      foreach (string Message in List) {
+    private int con;
+    private int Con {
+      set {
+        con = value;
+      }
+      get {
+        return con;
+      }
+    }
+    private bool Active;
+
+    // 输出目录
+    public void GetMenu() {
+      foreach (string Message in MenuList) {
         System.Console.WriteLine(Message);
       }
-
-      int Con = 0;
-      while (Con != 5) {
-        System.Console.WriteLine(List[Con = GetMenuReadKey(Con , 5)]);
-      }
+    }
+    public void GetMenu(int Item) {
+      System.Console.WriteLine(MenuList[Item]);
+    }
+    public void GetMenuAuto() {
+      System.Console.WriteLine(MenuList[Con]);
     }
 
-    public int GetMenuReadKey(int ControlValue , int Max , string Message) {
-      switch (System.Console.ReadLine().ToString()) {
-        case "w":
-          if (ControlValue != 0) {
-            ControlValue --;
-          }
-          break;
-        case "s":
-          if (ControlValue != Max) {
-            ControlValue ++;
-          }
-          break;
-        case " ":
-          if (GetMenuControl(ControlValue , 1) == 0) {
-            return Max;
-          }
-          break;
-      }
-      return ControlValue;
+    // 状态更新
+    public void ActiveUpdate() {
+      Active = Con == ConMax ? false : true;
     }
-    public int GetMenuReadKey(int ControlValue , int Max) {
+
+    // 目录
+    public void GetMenuCenter() {
+      GetMenu();
+
+      while (Active) {
+        GetMenuAuto();  
+        if (GetMenuReadKey()) {
+          ActiveUpdate();
+        }
+        System.Console.Write(Con);
+      }
+
+    }
+
+    /*
+     * 
+     * 
+     * 
+     */
+    public bool GetMenuReadKey() {
       
       switch (System.Console.ReadKey().KeyChar.ToString()) {
         case "w":
-          if (ControlValue != 0) {
-            ControlValue --;
-          }
+          Con = Con > 0 ? Con - 1 : Con;
           break;
         case "s":
-          if (ControlValue != Max) {
-            ControlValue ++;
-          }
+          Con = Con < ConMax ? Con + 1 : Con;
           break;
-        case " ":
-          System.Console.WriteLine("!!");
-          if (GetMenuControl(ControlValue , 1) == 0) {
-            return Max;
-          }
-          break;
+        case "q":
+          GetMenuControl();
+          return true;
       }
-      return ControlValue;
+      return false;
     }
 
-    public static int GetMenuControl(int ControlValue , int mode) {
-      switch (mode) {
+    // youwenti
+    public void GetMenuControl() {
+      switch (Con) {
+        case 0:
+
+          break;
         case 1:
-          switch (ControlValue) {
-            case 0:
 
-              break;
-            case 1:
-
-              break;
-            case 2:
-
-              break;
-            case 3:
-
-              break;
-            case 4:
-              return 0;
-
-          }
           break;
         case 2:
-          switch (ControlValue) {
-            case 0:
+          GetInformation.GetHelp();
+          break;
+        case 3:
 
-              break;
-            case 3:
-              return 0;
-
-          }
+          break;
+        case 4:    
+          Con = ConMax;
           break;
       }
-      return 0;
     }
-    //private 
 
   }
 
+  public class GetInformation {
+    public static void GetHelp() {
+      System.Console.Clear();
 
+      string[] Inf = new string[] { "Information :\n" , "??Create"};
+
+      foreach(string Message in Inf) {
+        System.Console.WriteLine(Message);
+        System.Threading.Thread.Sleep(1000);
+      }
+      
+    }
+
+  }
 }
 
 

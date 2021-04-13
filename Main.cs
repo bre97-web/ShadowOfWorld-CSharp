@@ -1,4 +1,5 @@
 ﻿
+
 /// <summary>
 /// 包含 Main 的命名空间
 /// </summary>
@@ -8,7 +9,8 @@ namespace ShadowOfWorld_Console_CSharp {
   /// </summary>
   public class Start {
 
-    // "active" Control Running "Part1" Function in Main
+    // "active" Control "Part1" Running Function in Main
+    // Default is true
     private static bool active;
     public static bool RunningTime {
       set {
@@ -19,11 +21,12 @@ namespace ShadowOfWorld_Console_CSharp {
       }
     }
 
-    public static void Main() {
 
-      // Default is true
+    public static void Main() {
+    
       RunningTime = true;
 
+      // Set Window Console Inf
       {
         System.Console.SetWindowSize(120 , 40);
         System.Console.SetBufferSize(121 , 40);
@@ -32,33 +35,51 @@ namespace ShadowOfWorld_Console_CSharp {
         System.Console.OutputEncoding = System.Text.Encoding.Unicode;
         System.Console.CursorVisible = false;
         System.Console.Title = "RMDUST TEST";
+        System.Console.Clear();
       }
       
-      
+      // Run 
       egg.Days time = new egg.Days();
 
-      ConsoleGraphic.Wellcome.Logo();
+      System.Console.Clear();
+      // Dev Information
+      ConsoleGraphic.DeveloperInf.Logo();
+      System.Threading.Thread.Sleep(1000);
+      ConsoleGraphic.Graphic.Load();
 
+      System.Console.Clear();
+
+
+
+      // Run !!!
       Part1();
+
+      System.Console.ReadKey();
     }
 
     /// <summary>
     /// 启动
     /// </summary>
     private static void Part1() {
-      Group.File.Manager.CoreInit();
+      // Initialization Local File and Folder
+      Group.File.Manager.Init();
 
+      string[] MenuValue = new string[] { "Game Start","Game Passage","Help","Back User","Game Exit" };
+
+      // Open Main-Menu
       ConsoleGraphic.Menu Core = null;
       do {
+        System.Console.Clear();
+
         Core = new ConsoleGraphic.Menu();
-        Core.MenuList = new string[] { "Game Start" , "Game Passage" , "Help" , "Back User" , "Game Exit" };
-        Core.ConMax = 4;
-        Core.ConMin = 0;
+        
+        Core.SetMenuList(MenuValue);
+        Core.SetMenuListItems(4,0);
 
         // Get name of user
-        Group.SignInAndSignUp.Register();
+        Group.Login.Register();
         // Create file of private user
-        Group.File.Manager.Init(Group.User.UserName);
+        Group.File.Manager.Init(Group.User.GetUserName());
         Core.GetMenuCenter();
 
         Core = null;
@@ -315,31 +336,47 @@ namespace ConsoleGraphic.Format {
   }
 }
 
-/// <summary>
-/// 表示与控制台相关的,特定的图形输出
-/// </summary>
 namespace ConsoleGraphic {
   /// <summary>
-  /// 程序启动时显示的开发者信息
+  /// 表示程序启动时显示的开发者信息
   /// </summary>
-  public class Wellcome {
+  public class DeveloperInf {
     /// <summary>
-    /// 开发者团队图标
+    /// 开发者图标
     /// </summary>
     public static void Logo() {
-      for (var count = (System.Console.LargestWindowHeight) / 2 ;count > 0 ;count--) {
-        System.Console.Write("\n");
-      }
-      System.Console.WriteLine("       == ===        =         =     ======       ==     ==     ======     =========     \n       ==    ==      ==       ==     ==    ==     ==     ==   ===          =   =   =     \n       ==     =      == =   = ==     ==     ==    ==     ==    ===             =         \n       ==  ==        ==  = =  ==     ==     ==    ==     ==       ====         =         \n       ==   ==       ==   =   ==     ==     ==    ==     ==           ==       =         \n       ==    ==      ==       ==     ==    =      ==     ==            =       =         \n       ==     ===    ==       ==    === ===       =========    =======        ===        \n");
-      System.Threading.Thread.Sleep(1000);
-      System.Console.Clear();
+      System.Console.Write(System.IO.File.ReadAllText("Resource/Logo.txt"));
     }
   }
 
+  /// <summary>
+  /// 表示控制台动画
+  /// </summary>
+  public class Graphic {
+    /// <summary>
+    /// 一段虚假的加载动画
+    /// </summary>
+    public static void Load() {
+      for (int Count = 5;Count > 0;Count--) {
+        System.Console.SetCursorPosition(60,20);
+        System.Console.WriteLine("|");
+        System.Threading.Thread.Sleep(100);
 
+        System.Console.SetCursorPosition(60,20);
+        System.Console.WriteLine("/");
+        System.Threading.Thread.Sleep(100);
 
+        System.Console.SetCursorPosition(60,20);
+        System.Console.WriteLine("-");
+        System.Threading.Thread.Sleep(200);
 
-  
+        System.Console.SetCursorPosition(60,20);
+        System.Console.WriteLine(@"\");
+        System.Threading.Thread.Sleep(100);
+      }
+    }
+
+  }
 
   /// <summary>
   /// 表示图形菜单的输出,控制流
@@ -350,22 +387,25 @@ namespace ConsoleGraphic {
       Active = true;
     }
 
-    public string[] MenuList;
-    public int ConMax;
-    public int ConMin;
-    private int con;
-    private int Con {
-      set {
-        con = value;
-      }
-      get {
-        return con;
-      }
-    }
+    // The MenuList are developers
+    private string[] MenuList;
+    private int MenuListItemsMax;
+    private int MenuListItemsMin;
+    private int MenuListNow;
     private bool Active;
 
+    public void SetMenuList(string[] Message) {
+      MenuList = Message;
+    }
+    public void SetMenuListItems(int Max , int Min) {
+      MenuListItemsMax = Max;
+      MenuListItemsMin = Min;
+    }
+
+
+
     /// <summary>
-    /// 输出表示图形菜单的值
+    /// 显示图形菜单
     /// </summary>
     private void GetMenu() {
       foreach (string Message in MenuList) {
@@ -373,24 +413,24 @@ namespace ConsoleGraphic {
       }
     }
     /// <summary>
-    /// 输出表示图形菜单的特定值
+    /// 显示图形菜单的特定项
     /// </summary>
     /// <param name="Item"></param>
     private void GetMenu(int Item) {
       System.Console.WriteLine(MenuList[Item]);
     }
     /// <summary>
-    /// 自动输出表示图形菜单的特定值
+    /// 自动显示图形菜单的特定项，依据 MenuListNow 的值
     /// </summary>
     private void GetMenuAuto() {
-      System.Console.WriteLine(MenuList[Con]);
+      GetMenu(MenuListNow);
     }
 
     /// <summary>
-    /// 更新控制开关状态
+    /// 更新控制开关 Active 状态
     /// </summary>
     private void ActiveUpdate() {
-      Active = Con == ConMax ? false : true;
+      Active = MenuListNow == MenuListItemsMax ? false : true;
     }
 
     /// <summary>
@@ -402,37 +442,40 @@ namespace ConsoleGraphic {
         GetMenu();
         GetMenuAuto();  
         if (GetMenuReadKey()) {
+          GetMenuControl();
           ActiveUpdate();
         }
         System.Console.Clear();
       }
 
     }
+
     /// <summary>
-    /// 获取控制台键入值,作出相应反应
+    /// 获取控制台键入值,作出反应
     /// </summary>
     /// <returns></returns>
-    public bool GetMenuReadKey() {
-      
+    private bool GetMenuReadKey() {
       switch (System.Console.ReadKey().KeyChar.ToString()) {
+        case "W":
         case "w":
-          Con = Con > 0 ? Con - 1 : Con;
+          MenuListNow = MenuListNow > MenuListItemsMin ? MenuListNow - 1 : MenuListNow;
           break;
+        case "S":
         case "s":
-          Con = Con < ConMax ? Con + 1 : Con;
+          MenuListNow = MenuListNow < MenuListItemsMax ? MenuListNow + 1 : MenuListNow;
           break;
         case " ":
-          GetMenuControl();
           return true;
       }
       return false;
     }
 
+    // 不要看 ， Do not Touch , Hanashinaii
     /// <summary>
-    /// 依据Con的值作出相应反应
+    /// 依据来自 GetMenuCenter 的值作出反应
     /// </summary>
-    public void GetMenuControl() {
-      switch (Con) {
+    private void GetMenuControl() {
+      switch (MenuListNow) {
         case 0:
           Game.GameCenter.GameStart();
           break;
@@ -440,22 +483,23 @@ namespace ConsoleGraphic {
           
           ConsoleGraphic.Menu Cc = new Menu();
           Cc.MenuList = new string[] { "开发中" , "开发中." , "开发中..."};
-          Cc.ConMax = 2;
+          Cc.MenuListItemsMax = 2;
           Cc.GetMenuCenter();
           
           break;
         case 2:
+          System.Console.Clear();
           GetInformation.GetHelp();
-          break;
-
-        // 注销并返回登入状态
+          System.Threading.Thread.Sleep(1000);
+          System.Console.Read();
+          break;        
         case 3:
-          Con = ConMax;
-          //ShadowOfWorld_Console_CSharp.Start.RunningTime = false;
+          // 注销并返回登入状态
+          MenuListNow = MenuListItemsMax;
           break;
-        // 终止运行
         case 4:
-          Con = ConMax;
+          // 终止运行
+          MenuListNow = MenuListItemsMax;
           ShadowOfWorld_Console_CSharp.Start.RunningTime = false;
           break;
       }
@@ -467,80 +511,113 @@ namespace ConsoleGraphic {
   /// 表示在控制台输出的开发者预备信息
   /// </summary>
   public class GetInformation {
+    /// <summary>
+    /// 获取自带来自开发者提供的帮助
+    /// </summary>
     public static void GetHelp() {
-      System.Console.Clear();
-
-
-
-      System.Console.WriteLine(System.IO.File.ReadAllLines(@"C:/Users/Public/Documents/RMDUST/ShadowOfWorld/Core/Inf.txt"));
-      System.Threading.Thread.Sleep(1000);
-      System.Console.Read();
-      
+      System.Console.WriteLine(System.IO.File.ReadAllText("Resource/HelpInf.txt"));
     }
 
   }
 }
 
-/// <summary>
-/// 表示与本地用户相关的控制流,输出流,输入流
-/// </summary>
 namespace Group.File {
 
   public class Manager {
 
-    public readonly static string[] Path = new string[] { @"C:/Users/Public/Documents/RMDUST/ShadowOfWorld/Save/" ,
-                                                          @"C:/Users/Public/Documents/RMDUST/ShadowOfWorld/Core/" ,
-                                                          @"C:/Users/Public/Documents/RMDUST/ShadowOfWorld/Save/UserNameList.txt" ,
-    };
-    //public static string UserFolder;
-
-
-    
+    private static string[] FolderPath = System.IO.File.ReadAllLines("Resource/Path/FolderInf.txt");
+    private static string[] FilePath = System.IO.File.ReadAllLines("Resource/Path/FileInf.txt");
 
     static Manager() {
      
     }
 
     /// <summary>
-    /// 检查所有原始文件是否存在
+    /// 得到一串路径，来自 Resource/Path/FolderInf.txt
     /// </summary>
-    public static void CoreInit() {
-      System.IO.Directory.CreateDirectory(Path[0]);
-      System.IO.Directory.CreateDirectory(Path[1]);
-      if (!System.IO.File.Exists(Path[2])) {
-        System.IO.File.Create(Path[2]).Close();
+    /// <returns></returns>
+    public static string[] GetFolderPath() {
+      return FolderPath;
+    }
+    /// <summary>
+    /// 得到一项路径，来自 Resource/Path/FolderInf.txt
+    /// </summary>
+    /// <param name="Line"></param>
+    /// <returns></returns>
+    public static string GetFolderPath(int Line) {
+      return FolderPath[Line];
+    }
+
+    /// <summary>
+    /// 得到一串路径，来自 Resource/Path/FileInf.txt
+    /// </summary>
+    /// <returns></returns>
+    public static string[] GetFilePath() {
+      return FilePath;
+    }
+    /// <summary>
+    /// 得到一项路径，来自 Resource/Path/FileInf.txt
+    /// </summary>
+    /// <param name="Line"></param>
+    /// <returns></returns>
+    public static string GetFilePath(int Line) {
+      return FilePath[Line];
+    }
+
+    /// <summary>
+    /// 检查登入用户的文件
+    /// </summary>
+    public static void Init(string ID) {
+      System.IO.Directory.CreateDirectory(GetFolderPath(0) + ID);
+
+    }
+    /// <summary>
+    /// 检查原始文件存在
+    /// </summary>
+    public static void Init() {
+      FindFolder();
+      FindFile();
+    }
+
+    /// <summary>
+    /// 创建原始文件夹，除非已经存在
+    /// </summary>
+    private static void FindFolder() {
+      foreach (string Path in GetFolderPath()) {
+        System.IO.Directory.CreateDirectory(Path);
       }
     }
     /// <summary>
-    /// 检查登入用户是否已装载应有文件
+    /// 创建原始文件，除非已经存在
     /// </summary>
-    public static void Init(string ID) {
-      System.IO.Directory.CreateDirectory(Path[0] + ID);
-    }
-    public static void Init() {
-      System.IO.Directory.CreateDirectory(Path[0] + Group.User.UserName);
+    private static void FindFile() {
+      foreach (string Path in GetFilePath()) {
+        if (!System.IO.File.Exists(Path)) {
+          System.IO.File.Create(Path).Close();
+        }
+      }
     }
 
   }
   public class User : Manager {
 
     /// <summary>
-    /// 索引本地用户文件并将结果
+    /// 索引本地用户文件，返回结果
     /// </summary>
     public static System.Collections.ArrayList Find() {
       System.Collections.ArrayList UserNameList = new System.Collections.ArrayList();
-      foreach (string UserName in System.IO.File.ReadAllLines(Path[2])) {
+      foreach (string UserName in System.IO.File.ReadAllLines(GetFilePath(0))) {
         UserNameList.Add(UserName);
       }
       return UserNameList;
     }
     /// <summary>
-    /// 检查用户名在本地用户文件中是否存在
+    /// 用户名在本地用户文件中是否存在
     /// </summary>
     /// <param name="ID"></param>
     /// <returns></returns>
     public static bool Find(string ID) {
-      foreach (string UserName in System.IO.File.ReadAllLines(Path[2])) {
+      foreach (string UserName in System.IO.File.ReadAllLines(GetFilePath(0))) {
         if (ID == UserName) {
           return true;
         }
@@ -552,10 +629,9 @@ namespace Group.File {
     /// 向本地用户文件添加一行用户名
     /// </summary>
     public static void Add(string ID) {
-      using (System.IO.StreamWriter Create = System.IO.File.AppendText(Path[2])) {
+      using (System.IO.StreamWriter Create = System.IO.File.AppendText(GetFilePath(0))) {
         Create.WriteLine(ID);
         Create.Close();
-
       }
     }
 
@@ -563,83 +639,82 @@ namespace Group.File {
     /// 向本地用户文件删除一行用户名
     /// </summary>
     public static void Delete() {
-
+      
     }
   }
 
 }
 
-/// <summary>
-/// 表示与用户相关的现有信息
-/// </summary>
 namespace Group {
   /// <summary>
-  /// 登入账户
+  /// 表示登录模块
   /// </summary>
-  public static class SignInAndSignUp {
+  public static class Login {
     
+    /// <summary>
+    /// 注册与登入
+    /// </summary>
     public static void Register() {
       Group.User.SetUserList();
-      Group.User.GetUserList();
+      ConsoleGraphic.Format.Ch.SquareLine("用户列表");
+      ConsoleGraphic.Format.Ch.SquareLine(Group.User.GetUserNameList());
 
-      Login();
-      if (Group.File.User.Find(Group.User.UserName)) {
-        SignIn();
-      } else {
+      // Put on a User Name
+      Group.User.SetUserName(System.Console.ReadLine());
+      
+      
+
+      while (!Group.File.User.Find(Group.User.GetUserName())) {
         SignUp();
+
       }
-    }
-    public static void Register(string ID) {
-      Group.User.UserName = ID;
-      if(Group.File.User.Find(Group.User.UserName)) {
-        SignIn();
-      } else {
-        SignUp();
-      }
+      SignIn();
     }
     /// <summary>
-    /// 提示用户注册一个用户名
+    /// 注册与登入
     /// </summary>
+    /// <param name="ID"></param>
+    public static void Register(string ID) {
+      Group.User.SetUserName(ID);
+      if (!Group.File.User.Find(Group.User.GetUserName())) {
+        SignUp();
+      }
+      SignIn();
+    }
+
     private static void SignUp() {
-      ConsoleGraphic.Format.Ch.Line("注册模式\n");
-      
-      Group.File.User.Add(Group.User.UserName);
-      Group.User.UserName = System.Console.ReadLine().ToString();
+      ConsoleGraphic.Format.Ch.SquareLine("注册模式");
+      Group.User.SetUserName(System.Console.ReadLine());
+      Group.File.User.Add(Group.User.GetUserName());
     }
     private static void SignIn() {
-      //System.Console.WriteLine("用户存在");
-    }
-    /// <summary>
-    /// 提示用户提供一个用户名
-    /// </summary>
-    private static void Login() {
       ConsoleGraphic.Format.Ch.SquareLine("登入模式");
-      Group.User.UserName = System.Console.ReadLine().ToString();
+      //XIANSHI NAME
+      Group.User.SetUserName(System.Console.ReadLine().ToString());
     }
   }
 
   public static class User {
-    private static string userName;
-    public static string UserName {
-      set {
-        userName = value;
-      }
-      get {
-        return userName;
-      }
+    private static string UserName;
+    private static System.Collections.ArrayList UserNameList = new System.Collections.ArrayList();
 
+    public static string GetUserName() {
+      return UserName;
+    }
+    public static void SetUserName(string Message) {
+      UserName = Message;
     }
 
-    public static System.Collections.ArrayList UserNameList = new System.Collections.ArrayList();
-
+    /// <summary>
+    /// 使用前必须调用 SetUserList()
+    /// </summary>
+    /// <returns></returns>
+    public static System.Collections.ArrayList GetUserNameList() {
+      return UserNameList;
+    }
     public static void SetUserList() {
       UserNameList = Group.File.User.Find();
     }
-    public static void GetUserList() {
-      ConsoleGraphic.Format.Ch.SquareLine("用户列表");
-      ConsoleGraphic.Format.Ch.SquareLine(UserNameList);
-    }
-
 
   }
 
@@ -650,11 +725,8 @@ namespace egg {
     string Day , Month ;
 
     public Days() {
-      //Day = System.DateTime.Now.Day.ToString();
-      //Month = System.DateTime.Now.Month.ToString();
-
-      Day = "1";
-      Month = "1";
+      Day = System.DateTime.Now.Day.ToString();
+      Month = System.DateTime.Now.Month.ToString();
 
       switch(Month) {
         case "1":Jan();break;
@@ -672,13 +744,13 @@ namespace egg {
 
     
     private void NewYear() {
-      ConsoleGraphic.Format.En.SquareLine("EGG TEST");
+      System.Console.WriteLine(System.IO.File.ReadAllText("Resource/Holiday/LunarNewYear.txt"));
 
 
-      System.Threading.Thread.Sleep(500);
+      System.Threading.Thread.Sleep(5000);
     }
     private void LunarYear() {
-
+      System.Console.WriteLine(System.IO.File.ReadAllText("Resource/Holiday/LunarNewYear.txt"));
     }
     private void ChinaYear() {
 

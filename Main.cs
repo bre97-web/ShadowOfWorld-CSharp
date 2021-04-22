@@ -169,6 +169,10 @@ namespace ConsoleGraphic.Format {
     public static string Message;
     public static int MessageLength;
 
+    public En() {
+      
+    }
+
     /// <summary>
     /// 输出带有边缘边框的,信息的横幅
     /// </summary>
@@ -662,11 +666,8 @@ namespace Group {
       // Put on a User Name
       Group.User.SetUserName(System.Console.ReadLine());
       
-      
-
       while (!Group.File.User.Find(Group.User.GetUserName())) {
         SignUp();
-
       }
       SignIn();
     }
@@ -689,7 +690,7 @@ namespace Group {
     }
     private static void SignIn() {
       ConsoleGraphic.Format.Ch.SquareLine("登入模式");
-      //XIANSHI NAME
+      ConsoleGraphic.Format.En.SquareLine(Group.User.GetUserName());
       Group.User.SetUserName(System.Console.ReadLine().ToString());
     }
   }
